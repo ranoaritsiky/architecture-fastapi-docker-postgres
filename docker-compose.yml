@@ -1,0 +1,65 @@
+version: "3"
+
+services:
+
+  app:
+    # user: root
+    container_name: "arch_app"
+    build: app/docker/
+    ports:
+      - 8001:8001
+    restart: always
+    networks:
+      - hr-net
+    depends_on:
+      - db
+    
+    command:
+      sh -c "uvicorn app.main:app --reload --host 127.0.0.1 --port 8008"
+    volumes:
+      - .:/usr/src/app
+    
+  db:
+    image: postgres:14.4
+    container_name: db
+    ports:
+      - "5433:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=arch_db
+    restart: always
+    volumes:
+        - ./postgresql:/var/lib/postgresql/data
+    networks:
+      - hr-net
+  db_test:
+      image: postgres:14.4
+      ports:
+        - "5434:5432"
+      environment:
+        - POSTGRES_USER=postgres
+        - POSTGRES_PASSWORD=postgres
+        - POSTGRES_DB=arch_test_db
+      restart: always
+      networks:
+      - hr-net
+
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=pgadmin4@pgadmin.org
+      - PGADMIN_DEFAULT_PASSWORD=admin
+    ports:
+      - "5050:80"
+    depends_on:
+      - db
+    restart: always
+    networks:
+      - hr-net
+
+  
+networks:
+  hr-net:
+    driver: bridge
