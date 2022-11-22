@@ -1,11 +1,8 @@
 from fastapi import Depends,FastAPI
 
-from .routers import todos
+from .routers import todos, main
 
 app = FastAPI()
 
 app.include_router(todos.router)
-
-@app.get("/")
-async def root():
-    return {"message":"hello world"}
+app.include_router(main.router)
