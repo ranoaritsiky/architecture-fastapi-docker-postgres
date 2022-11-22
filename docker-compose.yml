@@ -4,10 +4,10 @@ services:
 
   app:
     # user: root
-    container_name: "arch_app"
+    # container_name: "arch_app"
     build: app/docker/
     ports:
-      - 8001:8001
+      - 8000:8000
     restart: always
     networks:
       - hr-net
@@ -15,15 +15,15 @@ services:
       - db
     
     command:
-      sh -c "uvicorn app.main:app --reload --host 127.0.0.1 --port 8008"
+      sh -c "uvicorn app.main:app --reload"
     volumes:
       - .:/usr/src/app
     
   db:
     image: postgres:14.4
-    container_name: db
+    # container_name: db_arch
     ports:
-      - "5433:5432"
+      - "5433:5433"
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
